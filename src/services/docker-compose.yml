@@ -1,16 +1,4 @@
 services:
-  db:
-    image: mysql:8.0-debian
-    volumes: 
-    - db-volume:/var/lib/mysql
-    - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
-    environment:
-      - MYSQL_ROOT_PASSWORD
-      - MYSQL_USER
-      - MYSQL_PASSWORD
-    ports:
-      - "3306:3306"
-
   webserver:
     build: webserver
     environment:
@@ -18,7 +6,28 @@ services:
       - MYSQL_PASSWORD
     ports:
       - 8000:5000
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.0-debian
+    volumes: 
+    - db-volume:/var/lib/mysql
+    - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    - ./db/grantPrivileges.sh:/docker-entrypoint-initdb.d/02-privs
+    environment:
+      - MYSQL_ROOT_PASSWORD
+      - MYSQL_USER
+      - MYSQL_PASSWORD
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$MYSQL_ROOT_PASSWORD"]  
+      interval: 0.5s
+      timeout: 10s
+      retries: 50 
+      start_period: 1s
 
 volumes:
   db-volume:
-
