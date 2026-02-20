@@ -1,0 +1,16 @@
+services:
+  db:
+    image: mysql:8.0-debian
+    volumes: 
+    - db-volume:/var/lib/mysql
+    - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    environment:
+      - MYSQL_ROOT_PASSWORD
+      - MYSQL_USER
+      - MYSQL_PASSWORD
+    ports:
+      - "3306:3306"
+
+volumes:
+  db-volume:
+
