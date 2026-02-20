@@ -5,6 +5,7 @@ import Button from '@mui/material/Button';
 export default function Home() {
     return (
         <>
+          <div className = "bg-gray">
             <Header />
             <Button variant="contained">Hello world</Button>
             <div className="min-h-screen flex flex-col items-center justify-center gap-8">
@@ -15,6 +16,7 @@ export default function Home() {
                     <NavLink to="/about" end>About</NavLink>
                 </nav>
             </div>
+          </div>
         </>
     );
 }
