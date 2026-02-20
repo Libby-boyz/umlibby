@@ -11,6 +11,14 @@ services:
     ports:
       - "3306:3306"
 
+  webserver:
+    build: webserver
+    environment:
+      - MYSQL_USER
+      - MYSQL_PASSWORD
+    ports:
+      - 8000:5000
+
 volumes:
   db-volume:
 
