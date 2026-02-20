@@ -8,10 +8,11 @@ app = Flask(__name__)
 signal.signal(signal.SIGTERM, lambda: sys.exit(5))
 
 connection = mysql.connector.connect(
-    host="127.0.0.1",
+    host="db",
     port=3306,
-    user='root',  # os.environ['MYSQL_USER'],
-    password='rootpw'  # os.environ['MYSQL_PASSWORD']
+    user='root',
+    password=os.environ['MYSQL_ROOT_PASSWORD'],
+    database='libby'
 )
 
 
@@ -20,18 +21,28 @@ def hello_world():
     return "<p>Hello, World!</p>"
 
 
-@app.route('/api/<string:location>/<boolean:direction>', methods=["GET", "POST"])
+@app.route('/api/<location>/<direction>', methods=["GET", "POST"])
 def library_enter(location, direction):
+    print('location: ' + location, file=sys.stderr)
+    print('direction: ' + direction, file=sys.stderr)
     cursor = connection.cursor()
-    # id = getLocationId(location, cursor)
-    newDatapoint(0, direction, cursor)
+    id = getLocationId(location, cursor)
+    newDatapoint(id, (direction == 'enter'), cursor)
     cursor.close()
+    return 'ok'
 
-# def getLocationId(name, cursor):
-#     cursor.execute(('SELECT id FROM finus.library WHERE name = %name',), (name,) )  
-#     return cursor.fetchone()
+
+def getLocationId(name, cursor):
+    statement = (
+        'SELECT id FROM libby.library WHERE name = %s'
+    )
+    print('name: ' + name, file=sys.stderr)
+    cursor.execute(statement, (name,))
+    return cursor.fetchone()[0]
 
 
 def newDatapoint(id, enter: bool, cursor):
-    addDatapoint = ('INSERT INTO finus.datapoint (dp) VALUES (%(id), %(enter))')
-    cursor.execute(addDatapoint, { id: id, enter: enter }) 
+    statement = (
+            'INSERT INTO libby.capacity_datapoint (library_id, direction) VALUES (%s, %s)'
+    )
+    cursor.execute(statement, (id, enter))
