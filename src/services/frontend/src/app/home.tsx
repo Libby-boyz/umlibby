@@ -30,11 +30,13 @@ export default function Home() {
     }, []);
 
     return (
-      <div className="min-h-screen bg-yellow-200">
+        <div className="h-screen flex flex-col bg-yellow-200">
             <Header />
-            <div className="grid grid-cols-2 p-2 mt-6">
+            <div className="grid grid-cols-2 flex-1 min-h-0 p-2">
                 <CardList cards={cards} />
-                <Map />
+                <div className="flex h-full justify-center items-center">
+                    <Map />
+                </div>
             </div>
         </div>
     );

@@ -1,7 +1,7 @@
 export interface ILibrary {
     name: string;
     building: string;
-    floorCount: number;
+    floor_count: number;
     capacity: number;
     image: string;
 };
