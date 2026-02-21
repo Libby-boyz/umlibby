@@ -41,7 +41,7 @@ def new_datapoint(id, offset):
     statement = (
         'INSERT INTO libby.capacity_datapoint (library_id, offset) VALUES (%s, %s)'
     )
-    cursor.execute(statement, id, offset)
+    cursor.execute(statement, (id, offset))
     connection.commit()
     cursor.close()
 
@@ -116,4 +116,3 @@ def get_current_library_count(library_id, date, cursor) -> int | None:
 def getFirst(cursor):
     result = cursor.fetchone()
     return result[0] if result else None
-
