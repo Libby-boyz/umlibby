@@ -1,4 +1,4 @@
 wget \
   --method=GET\
   -O - \
-  http://localhost:8000/api/libraries/4/today/count
+  http://localhost:8000/api/locations
