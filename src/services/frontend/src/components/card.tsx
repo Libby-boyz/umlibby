@@ -2,6 +2,9 @@ import type { ILibrary } from "@mytypes/library";
 
 export default function Card({ name, building, floor_count, capacity, image, id, fullness }: ILibrary) {
   
+  if(!image || image.trim().length === 0){
+    image = `static/${id}.png`
+  }
 
   // On load of the page, fetch the data from the backend
   // useEffect(() => {
