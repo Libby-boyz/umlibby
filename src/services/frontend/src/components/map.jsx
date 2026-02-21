@@ -21,7 +21,7 @@ const loaderOptions = {
   libraries: LIBRARIES,
 }
 
-function MyComponent() {
+function Map(onMarkerClick) {
   const { isLoaded } = useJsApiLoader(loaderOptions)
 
   const [map, setMap] = React.useState(null)
@@ -78,10 +78,11 @@ function MyComponent() {
           }}
           title={place.name}
           clickable={true}
+          onClick={() => onMarkerClick && onMarkerClick(place.place_id)}
         />
       ))}
     </GoogleMap>
   )
 }
 
-export default React.memo(MyComponent)
+export default React.memo(Map);
