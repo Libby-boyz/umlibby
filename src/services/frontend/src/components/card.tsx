@@ -5,7 +5,7 @@ import NavigationIcon from '@mui/icons-material/Navigation';
 
 export default function Card({ name, building, floor_count, capacity, image, id, fullness, place_id, selected, summary }: ILibrary) {
 
-    const [isClicked, setIsClicked] = useState(false);
+  const [isClicked, setIsClicked] = useState(false);
 
   if(!image || image.trim().length === 0){
     image = `static/${id}.png`
