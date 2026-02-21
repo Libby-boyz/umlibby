@@ -68,6 +68,7 @@ function Map({ onMarkerClick }) {
       zoom={17}
       onLoad={handleMapLoad}
       onUnmount={handleUnmount}
+      onClick={(e) => e.stopPropagation()}
     >
       {places.map((place) => {
           console.log("Place ID:", place.place_id, place.name);
