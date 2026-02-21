@@ -17,19 +17,23 @@ connection = mysql.connector.connect(
 )
 
 
-@app.route("/")
-def hello_world():
-    return "<p>Hello, World!</p>"
+@app.route('/api/locations', methods=["GET"])
+def get_fullness():
+    cursor = connection.cursor()
+    statement = (
+        "SELECT name FROM library"
+    )
+    cursor.execute(statement)
+    return [item for sublist in cursor.fetchall() for item in sublist]
 
 
-@app.route('/api/<location>/<direction>', methods=["GET", "POST"])
+@app.route('/api/<location>/<direction>', methods=["POST"])
 def library_enter(location, direction):
-    print('location: ' + location, file=sys.stderr)
-    print('direction: ' + direction, file=sys.stderr)
     cursor = connection.cursor()
     id = getLocationId(location, cursor)
     newDatapoint(id, (direction == 'enter'), cursor)
     cursor.close()
+    connection.commit()
     return 'ok'
 
 
@@ -37,14 +41,13 @@ def getLocationId(name, cursor):
     statement = (
         'SELECT id FROM libby.library WHERE name = %s'
     )
-    print('name: ' + name, file=sys.stderr)
     cursor.execute(statement, (name,))
     return cursor.fetchone()[0]
 
 
 def newDatapoint(id, enter: bool, cursor):
     statement = (
-            'INSERT INTO libby.capacity_datapoint (library_id, direction) VALUES (%s, %s)'
+        'INSERT INTO libby.capacity_datapoint (library_id, direction) VALUES (%s, %s)'
     )
     cursor.execute(statement, (id, enter))
 
