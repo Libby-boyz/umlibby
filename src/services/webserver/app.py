@@ -40,7 +40,7 @@ def library_enter(location, offset):
 def get_fullness():
     cursor = connection.cursor()
     statement = (
-        "SELECT name FROM library"
+        "SELECT * FROM library"
     )
     cursor.execute(statement)
     return [item for sublist in cursor.fetchall() for item in sublist]
@@ -65,17 +65,19 @@ def new_datapoint(id, enter: bool, cursor):
 @app.route('/api/libraries/<library_name>/count', methods=["GET"])
 def get_library(library_name: str):
     print(request.args, file=sys.stderr)
-    if 'at' not in request.args:
-        return 'specify a time in query string', 400
+    time = datetime.datetime.now().strftime("%Y%m%d %X")
+    if 'at' in request.args:
+        time = request.args['at']
+
     cursor = connection.cursor()
-    count = get_current_library_count(library_name, cursor)
+    count = get_current_library_count(library_name, time, cursor)
     cursor.close()
     if count is None:
         return 'no data', 204
     return int(count)
 
 
-def get_current_library_count(library_id, cursor) -> int | None:
+def get_current_library_count(library_id, time, cursor) -> int | None:
     statement = (
         '''
         SELECT sum(dp.offset) FROM capacity_datapoint as dp
