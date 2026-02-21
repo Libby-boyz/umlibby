@@ -24,14 +24,10 @@ cursor.close()
 connection.commit()
 
 
-@app.route('/api/<location>/<offset>', methods=["POST"])
-def library_enter(location, offset):
+@app.route('/api/libraries/<library_id>/<offset>', methods=["POST"])
+def library_enter(library_id, offset):
     cursor = connection.cursor()
-    id = get_location_id(location, cursor)
-    if not id:
-        return "Library does not exist", 404
-
-    new_datapoint(id, offset, cursor)
+    new_datapoint(library_id, offset, cursor)
     connection.commit()
     cursor.close()
     return '', 204
@@ -70,8 +66,8 @@ def get_library(library_id: str, date: str):
     print(date, file=sys.stderr)
 
     cursor = connection.cursor()
-    if 'at' in request.args:
-        count = get_current_library_count_at(library_id, date, request.args.at, cursor)
+    if 'time' in request.args:
+        count = get_current_library_count_at(library_id, request.args.time, request.args.at, cursor)
     else:
         count = get_current_library_count(library_id, date, cursor)
 
@@ -88,7 +84,7 @@ def get_current_library_count_at(library_id, date, time, cursor) -> int | None:
         SELECT sum(dp.offset) FROM capacity_datapoint as dp
         WHERE dp.library_id = %s
         AND DATE(dp.time) = %s
-        AND TIME(dp.time) < %s;
+        AND TIME(dp.time) <= %s;
         '''
     )
 
