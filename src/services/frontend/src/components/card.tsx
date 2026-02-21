@@ -1,6 +1,6 @@
 import type { ILibrary } from "@mytypes/library";
 
-export default function Card({ name, building, floor_count, capacity, image, id, count }: ILibrary) {
+export default function Card({ name, building, floor_count, capacity, image, id, fullness }: ILibrary) {
   
 
   // On load of the page, fetch the data from the backend
@@ -31,7 +31,7 @@ export default function Card({ name, building, floor_count, capacity, image, id,
       <div className="p-4">
         <h2 className="text-3xl font-semibold mb-2">{name}</h2>
           <div className="text-lg font-medium">
-            <p className="">Capacity: {count}/{capacity}</p>
+            <p className="">Capacity: {fullness == null ? 0 : fullness}/{capacity}</p>
             <p className="">Building: {building}</p>
             <p className="">Floor Count: {floor_count}</p>
           </div>
