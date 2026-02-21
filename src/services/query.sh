@@ -1,4 +1,4 @@
 wget \
-  --method=POST \
+  --method=GET\
   -O - \
-  http://localhost:8000/api/Elizabeth%20Dafoe%20Library/in
+  http://localhost:8000/api/libraries/Elizabeth%20Dafoe%20Library/count?at=now

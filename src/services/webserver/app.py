@@ -1,13 +1,11 @@
-from flask_cors import CORS
-from flask import Flask
+from flask import Flask, request
 import mysql.connector
-import os
 import signal
 import sys
+import os
+import datetime
 
 app = Flask(__name__)
-cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
-
 signal.signal(signal.SIGTERM, lambda: sys.exit(5))
 
 connection = mysql.connector.connect(
@@ -18,21 +16,20 @@ connection = mysql.connector.connect(
     database='libby'
 )
 
-
 cursor = connection.cursor()
 cursor.execute('SET @@session.time_zone = "-6:00";')
 cursor.close()
 connection.commit()
 
 
-@app.route('/api/<location>/<direction>', methods=["POST"])
-def library_enter(location, direction):
+@app.route('/api/<location>/<offset>', methods=["POST"])
+def library_enter(location, offset):
     cursor = connection.cursor()
     id = get_location_id(location, cursor)
     if not id:
         return "Library does not exist", 404
 
-    new_datapoint(id, (direction == 'in'), cursor)
+    new_datapoint(id, offset, cursor)
     connection.commit()
     cursor.close()
     return '', 204
@@ -64,8 +61,11 @@ def new_datapoint(id, enter: bool, cursor):
     cursor.execute(statement, (id, 1 if enter else -1))
 
 
-@app.route('/api/libraries/<libraryname>', methods=["GET"])
+@app.route('/api/libraries/<library_name>/count', methods=["GET"])
 def get_library(library_name: str):
+    print(request.args, file=sys.stderr)
+    if 'at' not in request.args:
+        return 'specify a time in query string', 400
     cursor = connection.cursor()
     count = get_current_library_count(library_name, cursor)
     cursor.close()
@@ -77,7 +77,7 @@ def get_library(library_name: str):
 def get_current_library_count(library_id, cursor) -> int | None:
     statement = (
         '''
-        SELECT sum(dp.direction) FROM capacity_datapoint as dp
+        SELECT sum(dp.offset) FROM capacity_datapoint as dp
         WHERE dp.library_id = %s AND DATE(dp.time) = CURRENT_DATE();
         '''
     )
