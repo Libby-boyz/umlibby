@@ -39,9 +39,17 @@ def library_enter(library_id, offset):
 def new_datapoint(id, offset):
     cursor = connection.cursor()
     statement = (
-        'INSERT INTO libby.capacity_datapoint (library_id, offset) VALUES (%s, %s)'
+        '''
+        INSERT INTO libby.capacity_datapoint(library_id, offset)
+        SELECT %s, %s FROM dual
+        WHERE NOT EXISTS (
+            SELECT fullness FROM current_capacity AS cc
+            WHERE cc.library_id = %s
+            AND (cc.fullness + %s) < 0
+        );
+        '''
     )
-    cursor.execute(statement, (id, offset))
+    cursor.execute(statement, (id, offset, id, int(offset)))
     connection.commit()
     cursor.close()
 
@@ -55,12 +63,10 @@ def get_locations():
     cursor = connection.cursor(dictionary=True)
     statement = (
         '''
-        SELECT lib.*, SUM(dp.offset) AS fullness
+        SELECT lib.*, cc.fullness AS fullness
         FROM library lib
-        LEFT JOIN capacity_datapoint dp
-            ON dp.library_id = lib.id
-            AND DATE(dp.time) = CURDATE()
-        GROUP BY lib.id;
+        LEFT JOIN current_capacity cc
+            ON cc.library_id = lib.id
         '''
     )
     cursor.execute(statement)
@@ -68,6 +74,9 @@ def get_locations():
     cursor.close()
     return result
 
+
+'''
+'''
 @app.route('/api/libraries/<library_id>/<date>/count', methods=["GET"])
 def get_library(library_id: str, date: str):
     if date == 'today':

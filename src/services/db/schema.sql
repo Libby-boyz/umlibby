@@ -1,6 +1,7 @@
 CREATE DATABASE libby;
+USE libby;
 
-CREATE TABLE libby.library(
+CREATE TABLE library(
     id          INTEGER      NOT NULL AUTO_INCREMENT,
     name        VARCHAR(100) NOT NULL,
     building    VARCHAR(100) NOT NULL,
@@ -13,7 +14,7 @@ CREATE TABLE libby.library(
     PRIMARY KEY (id)
 );
 
-CREATE TABLE libby.capacity_datapoint(
+CREATE TABLE capacity_datapoint(
     id          INTEGER  NOT NULL AUTO_INCREMENT,
     library_id  INTEGER  NOT NULL,
     time        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -22,7 +23,6 @@ CREATE TABLE libby.capacity_datapoint(
     PRIMARY KEY (id),
     FOREIGN KEY (library_id) REFERENCES library(id) ON DELETE CASCADE
 );
-
 
 INSERT INTO libby.library (name, building, latitude, longitude, capacity, floor_count, image, place_id) VALUES
     ("Elizabeth Dafoe Library",                        "Elizabeth Dafoe Library",    49.80588, -97.14097, 1007, 3, "https://umanitoba.ca/libraries/sites/libraries/files/styles/3x2_900w/public/2020-11/dafoe-library.JPG?itok=77qX113_", "ChIJyT3wMeN16lIR4uCNN2ihi2c"),
@@ -33,3 +33,8 @@ INSERT INTO libby.library (name, building, latitude, longitude, capacity, floor_
     ("Albert D. Cohen Management Library",             "Drake Centre",               49.80806, -97.13000, 0,    4, "static/6.png", ""),
     ("Donald W. Craik Engineering Library",            "EITC-E3",                    49.80590, -97.14000, 0,    1, "static/7.png", ""),
     ("Eckhardt-Gramatte Music Library",                "Tache Arts Complex",         49.80580, -97.14200, 0,    1, "https://umanitoba.ca/libraries/sites/libraries/files/styles/3x2_900w/public/2024-12/music-library-interior-study-area.jpg?itok=U8kfJFra", "ChIJ47NlLRZ16lIRmX5v8E3uUMs")
+
+CREATE VIEW current_capacity AS
+SELECT dp.library_id, SUM(dp.offset) AS fullness FROM capacity_datapoint as dp
+WHERE DATE(dp.time) = CURDATE()
+GROUP BY dp.library_id;
