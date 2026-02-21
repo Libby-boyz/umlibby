@@ -23,7 +23,7 @@ CREATE TABLE libby.capacity_datapoint(
 );
 
 
-INSERT INTO libby.library (name, building, latitude, longitude, capacity, floor_count) VALUES
+INSERT INTO libby.library (name, building, latitude, longitude, capacity, floor_count, image) VALUES
     ("Elizabeth Dafoe Library",                        "Elizabeth Dafoe Library",    49.80588, -97.14097, 1007, 3, "https://umanitoba.ca/libraries/sites/libraries/files/styles/3x2_900w/public/2020-11/dafoe-library.JPG?itok=77qX113_"),
     ("Father Harold Drake Library",                    "St. Paul's College",         49.80806, -97.13000, 150 , 2, "https://umanitoba.ca/libraries/sites/libraries/files/styles/3x2_900w/public/2020-12/father-h-drake-library_2.jpg?itok=Y_svr4zg"),
     ("E. K. Williams Law Library",                     "Robson Hall",                49.80550, -97.14150, 113,  1, "https://www.umanitoba.ca/libraries/sites/libraries/files/styles/3x2_900w/public/2020-12/ek-williams-law-library-exterior.jpg?itok=6b-G8tAl"),
@@ -34,4 +34,3 @@ INSERT INTO libby.library (name, building, latitude, longitude, capacity, floor_
     ("Eckhardt-Gramatte Music Library",                "Tache Arts Complex",         49.80580, -97.14200, 0,    1, "https://umanitoba.ca/libraries/sites/libraries/files/styles/3x2_900w/public/2024-12/music-library-interior-study-area.jpg?itok=U8kfJFra"),
     ("St. John's College Library",                     "St. John's College",         49.80480, -97.13850, 0,    1, " ");
 
-    
