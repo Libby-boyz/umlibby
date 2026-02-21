@@ -24,7 +24,7 @@ export default function Card({ name, building, floor_count, capacity, image, id,
 
       </div>
       <img
-        className="w-full md:w-80 h-60 md:h-auto object-cover"
+        className="w-full md:w-80 h-60 md:h-auto object-cover md:rounded-tr-2xl md:rounded-bl-2xl"
         src={image || "https://umanitoba.ca/libraries/sites/libraries/files/styles/3x2_900w/public/2020-11/dafoe-library.JPG?itok=77qX113_"}
         alt={name}
       />
