@@ -1,18 +1,39 @@
+import { useState, useEffect } from "react";
 import Header from "@components/header";
+import CardList from "@components/cardList";
 import Map from "@components/map";
 import { Button } from '@mui/material';
+import type { Library } from "@mytypes/library";
+
+// const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+const apiBaseUrl = "localhost"
 
 export default function Home() {
+    const [cards, setCards] = useState<Library[]>([]);
+
+    // On load of the page, fetch the data from the backend
+    useEffect(() => {
+        fetch(`${apiBaseUrl}/api/locations`)
+            .then((res) => {
+                if(!res.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return res.json();
+            })
+            .then((data) => {
+                console.log("Search results:", data)
+                setCards(data);
+            })
+            .catch((error) => {
+                console.error("Error fetching data:", error);
+            })
+    }, []);
+
     return (
-        <div className="bg-yellow-200">
+      <div className="min-h-screen bg-yellow-200">
             <Header />
             <div className="grid grid-cols-2 p-2 mt-6">
-                <div className="flexmin-h-screen flex flex-col items-center justify-center gap-8">
-                    <h1 className="text-6xl font-bold tracking-tight">UMLibby</h1>
-
-                    <p className="text-2xl">Track libs</p>
-                    <Button variant="contained">Hello world</Button>
-                </div>
+                <CardList cards={cards} />
                 <Map />
             </div>
         </div>

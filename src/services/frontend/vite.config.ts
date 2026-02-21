@@ -7,6 +7,7 @@ export default defineConfig({
     resolve: {
         alias: {
             "@components": "/src/components",
+            "@mytypes": "src/types",
         },
     },
     plugins: [react(), tailwindcss()],

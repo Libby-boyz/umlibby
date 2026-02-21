@@ -9,7 +9,8 @@
         "jsx": "react",
         "allowJs": true,
         "paths": {
-            "@components/*": ["src/components/*"]
+            "@components/*": ["src/components/*"],
+            "@mytypes/*": ["src/types/*"]
         }
     }
 }
