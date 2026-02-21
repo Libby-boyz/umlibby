@@ -9,7 +9,7 @@ export const apiBaseUrl = "http://localhost:8000"
 
 export default function Home() {
     const [cards, setCards] = useState<ILibrary[]>([]);
-    const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
+    const [selectedPlaceId, setSelectedPlaceId] = useState<string>("");
 
     // On load of the page, fetch the data from the backend
     useEffect(() => {
@@ -40,8 +40,8 @@ export default function Home() {
     return (
         <div className="h-screen flex flex-col bg-off-white">
             <Header locname="UNIVERSITY OF MANITOBA"/>
-            <div className="grid grid-cols-2 flex-1 min-h-0 p-2" onClick={() => setSelectedPlaceId(null)} >
-                <CardList cards={filteredCards} />
+            <div className="grid grid-cols-2 flex-1 min-h-0 p-2" onClick={() => setSelectedPlaceId("")} >
+                <CardList cards={filteredCards} selected={selectedPlaceId} />
                 <div className="flex h-full justify-center items-center" onClick={(e) => e.stopPropagation()} >
                     {/* @ts-ignore */}
                     <Map onMarkerClick={(placeId) => setSelectedPlaceId(placeId)} />

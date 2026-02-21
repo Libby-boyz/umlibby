@@ -7,4 +7,6 @@ export interface ILibrary {
     id: number;
     place_id: string;
     fullness: number | null;
+    selected: string;
+    summary: string;
 };

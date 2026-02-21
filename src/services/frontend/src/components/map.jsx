@@ -6,6 +6,7 @@ const containerStyle = {
   height: '100%',
   borderRadius: '20px',
   margin: '1em',
+  boxShadow: '0 0 20px rgba(0, 0, 0, 0.3)',
 }
 
 const center = {
