@@ -10,8 +10,8 @@ export default function CardList({ cards }: CardListProps) {
 
     <div className="flexmin-h-screen flex flex-col items-center justify-center gap-8">
         <ul>
-            {cards.map(card => (
-                <li key={card.name}>
+            {cards.map((card, index) => (
+                <li key={index}>
                     <Card name={card.name} building={card.building} floorCount={card.floorCount} capacity={card.capacity} image={card.image} />
                 </li>
             ))}

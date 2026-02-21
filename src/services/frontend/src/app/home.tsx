@@ -6,7 +6,7 @@ import { Button } from '@mui/material';
 import type { ILibrary } from "@mytypes/library";
 
 // const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-const apiBaseUrl = "localhost:8000"
+const apiBaseUrl = "http://localhost:8000"
 
 export default function Home() {
     const [cards, setCards] = useState<ILibrary[]>([]);

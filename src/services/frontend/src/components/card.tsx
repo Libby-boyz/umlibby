@@ -9,7 +9,7 @@ export default function Card({ name, building, floorCount, capacity, image }: IL
           {name}
         </h2>
         <p className="text-sm">
-            SOME TEXT
+            {building}
         </p>
         <p className="text-right text-sm mt-2">
           {floorCount}{building}{capacity}
