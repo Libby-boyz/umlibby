@@ -63,11 +63,10 @@ def new_datapoint(id, enter: bool, cursor):
 def get_library(library_id: str, date: str):
     if date == 'today':
         date = datetime.datetime.now().strftime("%Y-%m-%d")
-    print(date, file=sys.stderr)
 
     cursor = connection.cursor()
     if 'time' in request.args:
-        count = get_current_library_count_at(library_id, request.args.time, request.args.at, cursor)
+        count = get_current_library_count_at(library_id, date, request.args['time'], cursor)
     else:
         count = get_current_library_count(library_id, date, cursor)
 
@@ -81,10 +80,9 @@ def get_library(library_id: str, date: str):
 def get_current_library_count_at(library_id, date, time, cursor) -> int | None:
     statement = (
         '''
-        SELECT sum(dp.offset) FROM capacity_datapoint as dp
-        WHERE dp.library_id = %s
+        SELECT sum(dp.offset) FROM capacity_datapoint as dp WHERE dp.library_id = %s
         AND DATE(dp.time) = %s
-        AND TIME(dp.time) <= %s;
+        AND TIME_TO_SEC(TIME(dp.time)) <= %s;
         '''
     )
 
