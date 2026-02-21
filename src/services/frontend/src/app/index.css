@@ -12,6 +12,17 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+@theme {
+    --color-navy: #004bad;
+    --color-regular-blue: #0077ff;
+    --color-light-blue: #9fc9ff;
+    --color-off-white: #f2f0f6;
+    --color-cream: #fdfbd4;
+    --color-myorange: #ffa500;
+    --color-olive: #445626;
+    --color-brown: #7c573d;
+}
+
 a {
     font-weight: 500;
     color: #646cff;
