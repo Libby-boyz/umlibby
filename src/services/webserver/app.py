@@ -11,7 +11,7 @@ cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 signal.signal(signal.SIGTERM, lambda: sys.exit(5))
 
 connection = mysql.connector.connect(
-    pool_size=15,
+    # pool_size=15,
     host="db",
     port=3306,
     user='root',
@@ -60,11 +60,11 @@ def get_location_id(name, cursor) -> int | None:
     return result[0] if result else None
 
 
-def new_datapoint(id, enter: bool, cursor):
+def new_datapoint(id, offset, cursor):
     statement = (
         'INSERT INTO libby.capacity_datapoint (library_id, offset) VALUES (%s, %s)'
     )
-    cursor.execute(statement, (id, 1 if enter else -1))
+    cursor.execute(statement, offset)
 
 
 @app.route('/api/libraries/<library_id>/<date>/count', methods=["GET"])
@@ -73,10 +73,10 @@ def get_library(library_id: str, date: str):
         date = datetime.datetime.now().strftime("%Y-%m-%d")
 
     cursor = connection.cursor()
-    if 'time' in request.args:
-        count = get_current_library_count_at(library_id, date, request.args['time'], cursor)
-    else:
-        count = get_current_library_count(library_id, date, cursor)
+    if 'time' not in request.args:
+        return 'must provide ?time=seconds_since_midnight', 400
+
+    count = get_current_library_count_at(library_id, date, request.args['time'], cursor)
 
     cursor.close()
     if count is None:
