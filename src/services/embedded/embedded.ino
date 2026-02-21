@@ -5,27 +5,22 @@
 const int RED = 15;
 const int YELLOW = 23;
 const int GREEN = 22;
-const int MS_BUFFER = 1000;
-const int MAX_DIST_CM = 200;
 const int DETECT_TRIGGER_DIST = 40;
 
 struct sensor {
   int trigPin;
   int echoPin;
   unsigned long recentTriggerTime;
-  unsigned long time2;
-  float prevDist;
-  float currDist;
   bool isTriggered;
 };
 
-sensor sensorA = {5, 4, millis(), millis(), MAX_DIST_CM, MAX_DIST_CM, false};
-sensor sensorB = {21, 20, millis(), millis(), MAX_DIST_CM, MAX_DIST_CM, false};
+sensor sensorA = {5, 4, millis(), false};
+sensor sensorB = {21, 20, millis(), false};
 
 WiFiClient client;
 HTTPClient http;
 
-const String serverUrl = "http://" + LOCAL_IP + ":8000/api/locations";
+const String serverUrl = "http://" + LOCAL_IP + ":8000/api/libraries/6/";
 
 // the setup function runs once when you press reset or power the board
 void setup() {
@@ -130,32 +125,36 @@ void loop() {
 void determineMotion() {
   if (sensorA.recentTriggerTime < sensorB.recentTriggerTime) {
     Serial.println("A before B");
-    httpSend();
     flash(GREEN);
+    send(true);
   } else {
     Serial.println("B before A");
     flash(RED);
+    send(false);
   }
 }
 
-void httpSend() {
-  http.begin(serverUrl);  // Start connection
-  int httpResponseCode = http.GET();  // Send GET request
+void send(bool isEnter) {
+  uint8_t *payload;
+  http.begin(serverUrl + (isEnter ? "1" : "-1"));  // Start connection
+  int httpResponseCode = http.POST(payload, 0);  // Send GET request
 
-  if (httpResponseCode > 0) {
+  if (httpResponseCode == 204) {
     Serial.print("HTTP Response code: ");
     Serial.println(httpResponseCode);
-
     String response = http.getString();
     Serial.println("Response:");
     Serial.println(response);
     flash(GREEN);
-    delay(1000);
+    delay(200);
   } else {
     Serial.print("Error code: ");
     Serial.println(httpResponseCode);
+    String response = http.getString();
+    Serial.println("Response:");
+    Serial.println(response);
     flash(RED);
-    delay(1000);
+    delay(200);
   }
 
   http.end();

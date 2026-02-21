@@ -4,4 +4,6 @@ export interface ILibrary {
     floor_count: number;
     capacity: number;
     image: string;
+    id: number;
+    count: number;
 };

@@ -6,7 +6,7 @@ import { Button } from '@mui/material';
 import type { ILibrary } from "@mytypes/library";
 
 // const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-const apiBaseUrl = "http://localhost:8000"
+export const apiBaseUrl = "http://localhost:8000"
 
 export default function Home() {
     const [cards, setCards] = useState<ILibrary[]>([]);
@@ -30,7 +30,7 @@ export default function Home() {
     }, []);
 
     return (
-        <div className="h-screen flex flex-col bg-yellow-200">
+        <div className="h-screen flex flex-col bg-off-white">
             <Header locname="UNIVERSITY OF MANITOBA"/>
             <div className="grid grid-cols-2 flex-1 min-h-0 p-2">
                 <CardList cards={cards} />

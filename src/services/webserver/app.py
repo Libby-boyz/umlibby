@@ -11,6 +11,7 @@ cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 signal.signal(signal.SIGTERM, lambda: sys.exit(5))
 
 connection = mysql.connector.connect(
+    pool_size=15,
     host="db",
     port=3306,
     user='root',
