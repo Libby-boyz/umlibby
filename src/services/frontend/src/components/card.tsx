@@ -1,6 +1,6 @@
 import type { ILibrary } from "@mytypes/library";
 
-export default function Card({ name, building, floor_count, capacity, image, id, fullness }: ILibrary) {
+export default function Card({ name, building, floor_count, capacity, image, id, fullness, place_id }: ILibrary) {
 
   if(!image || image.trim().length === 0){
     image = `static/${id}.png`

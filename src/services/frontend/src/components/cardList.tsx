@@ -12,7 +12,7 @@ export default function CardList({ cards }: CardListProps) {
         <ul>
             {cards.map((card, index) => (
                 <li key={index}>
-                    <Card name={card.name} building={card.building} floor_count={card.floor_count} capacity={card.capacity} image={card.image} id={card.id} fullness={card.fullness} />
+                    <Card name={card.name} building={card.building} floor_count={card.floor_count} capacity={card.capacity} image={card.image} id={card.id} fullness={card.fullness} place_id={card.place_id} />
                 </li>
             ))}
         </ul>

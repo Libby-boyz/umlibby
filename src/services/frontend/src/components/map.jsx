@@ -21,7 +21,7 @@ const loaderOptions = {
   libraries: LIBRARIES,
 }
 
-function Map(onMarkerClick) {
+function Map({ onMarkerClick }) {
   const { isLoaded } = useJsApiLoader(loaderOptions)
 
   const [map, setMap] = React.useState(null)
@@ -69,18 +69,21 @@ function Map(onMarkerClick) {
       onLoad={handleMapLoad}
       onUnmount={handleUnmount}
     >
-      {places.map((place) => (
-        <MarkerF
-          key={place.place_id}
-          position={{
-            lat: place.geometry.location.lat(),
-            lng: place.geometry.location.lng(),
-          }}
-          title={place.name}
-          clickable={true}
-          onClick={() => onMarkerClick && onMarkerClick(place.place_id)}
-        />
-      ))}
+      {places.map((place) => {
+          console.log("Place ID:", place.place_id, place.name);
+          return (
+            <MarkerF
+              key={place.place_id}
+              position={{
+                lat: place.geometry.location.lat(),
+                lng: place.geometry.location.lng(),
+              }}
+              title={place.name}
+              clickable={true}
+              onClick={() => onMarkerClick && onMarkerClick(place.place_id)}
+            />
+          );
+        })}
     </GoogleMap>
   )
 }

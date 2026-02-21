@@ -9,7 +9,7 @@ export const apiBaseUrl = "http://localhost:8000"
 
 export default function Home() {
     const [cards, setCards] = useState<ILibrary[]>([]);
-    const [selectedPlaceId, setSelectedPlaceId] = useState<number | null>(null);
+    const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
 
     // On load of the page, fetch the data from the backend
     useEffect(() => {
@@ -29,7 +29,7 @@ export default function Home() {
             })
     }, []);
 
-    const filteredCards = selectedPlaceId ? cards.filter((c) => c.id === selectedPlaceId) : cards;
+    const filteredCards = selectedPlaceId ? cards.filter((c) => c.place_id === selectedPlaceId) : cards;
 
     return (
         <div className="h-screen flex flex-col bg-off-white">

@@ -5,5 +5,6 @@ export interface ILibrary {
     capacity: number;
     image: string;
     id: number;
+    place_id: string;
     fullness: number | null;
 };
