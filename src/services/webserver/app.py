@@ -5,9 +5,9 @@ import os
 import signal
 import sys
 
+app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-app = Flask(__name__)
 signal.signal(signal.SIGTERM, lambda: sys.exit(5))
 
 connection = mysql.connector.connect(
