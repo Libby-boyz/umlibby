@@ -1,12 +1,13 @@
-from flask import Flask, request
+from flask_cors import CORS
+from flask import Flask
 import mysql.connector
-import signal
-import sys
 import os
+import signal
 import datetime
+import sys
 
 app = Flask(__name__)
-signal.signal(signal.SIGTERM, lambda: sys.exit(5))
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 connection = mysql.connector.connect(
     host="db",
