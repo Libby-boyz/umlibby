@@ -5,7 +5,8 @@
 const int RED = 15;
 const int YELLOW = 23;
 const int GREEN = 22;
-const int DETECT_TRIGGER_DIST = 40;
+const int DETECT_TRIGGER_DIST = 60;
+const int RESET_TIME_MS = 1000;
 
 struct sensor {
   int trigPin;
@@ -20,7 +21,7 @@ sensor sensorB = {21, 20, millis(), false};
 WiFiClient client;
 HTTPClient http;
 
-const String serverUrl = "http://" + LOCAL_IP + ":8000/api/libraries/6/";
+const String serverUrl = "http://" + LOCAL_IP + ":8000/api/libraries/" + LIB_ID + "/";
 
 // the setup function runs once when you press reset or power the board
 void setup() {
@@ -62,7 +63,6 @@ void flash(int pin) {
   digitalWrite(pin, HIGH);  // turn the LED on (HIGH is the voltage level)
   delay(200);                      // wait for a second
   digitalWrite(pin, LOW);   // turn the LED off by making the voltage LOW
-  delay(200); 
 }
 
 float convertToCM(int ms) {
@@ -95,7 +95,7 @@ void loop() {
   bool currentSensorA = distanceA < DETECT_TRIGGER_DIST;
   bool currentSensorB = distanceB < DETECT_TRIGGER_DIST;
 
-  if (currentSensorA && millis() - sensorA.recentTriggerTime > 2000) {
+  if (currentSensorA && millis() - sensorA.recentTriggerTime > RESET_TIME_MS) {
     sensorA.isTriggered = true;
     sensorA.recentTriggerTime = millis();
     if (sensorA.isTriggered && sensorB.isTriggered) {
@@ -103,7 +103,7 @@ void loop() {
     }
   }
 
-  if (currentSensorB && millis() - sensorB.recentTriggerTime > 2000) {
+  if (currentSensorB && millis() - sensorB.recentTriggerTime > RESET_TIME_MS) {
     sensorB.isTriggered = true;
     sensorB.recentTriggerTime = millis();
     if (sensorB.isTriggered && sensorA.isTriggered) {
@@ -111,11 +111,11 @@ void loop() {
     }
   }
 
-  if (millis() - sensorA.recentTriggerTime > 2000) {
+  if (millis() - sensorA.recentTriggerTime > RESET_TIME_MS) {
     sensorA.isTriggered = false;
   }
 
-  if (millis() - sensorB.recentTriggerTime > 2000) {
+  if (millis() - sensorB.recentTriggerTime > RESET_TIME_MS) {
     sensorB.isTriggered = false;
   }
 
@@ -137,7 +137,7 @@ void determineMotion() {
 void send(bool isEnter) {
   uint8_t *payload;
   http.begin(serverUrl + (isEnter ? "1" : "-1"));  // Start connection
-  int httpResponseCode = http.POST(payload, 0);  // Send GET request
+  int httpResponseCode = http.POST(payload, 0);  // Send POST request
 
   if (httpResponseCode == 204) {
     Serial.print("HTTP Response code: ");
@@ -146,7 +146,6 @@ void send(bool isEnter) {
     Serial.println("Response:");
     Serial.println(response);
     flash(GREEN);
-    delay(200);
   } else {
     Serial.print("Error code: ");
     Serial.println(httpResponseCode);
@@ -154,7 +153,6 @@ void send(bool isEnter) {
     Serial.println("Response:");
     Serial.println(response);
     flash(RED);
-    delay(200);
   }
 
   http.end();
