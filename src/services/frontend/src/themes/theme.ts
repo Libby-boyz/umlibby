@@ -13,7 +13,7 @@ export function setupTheme() {
         primary: "#555",
       },
       background: {
-        main: "#fff",
+        main: "#555",
       },
     };
 
@@ -50,7 +50,7 @@ export function setupTheme() {
                return `
                    html {
                       font-size: 62.5%;
-                   }  
+                   }
                    *::-webkit-scrollbar {
                       height: 8px;
                       width: 8px;

@@ -10,15 +10,14 @@ import Home from "./home.tsx";
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { setupTheme } from '../themes/theme';
 
+const theme = setupTheme();
+
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
-      <ThemeProvider theme={setupTheme}>
-      <CssBaseline enableColorScheme />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Home />} />
           </Routes>
         </BrowserRouter>
-      </ThemeProvider>
-    </StrictMode>,
+    </StrictMode>
 );
