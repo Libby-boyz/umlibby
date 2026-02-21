@@ -24,7 +24,7 @@ CREATE TABLE capacity_datapoint(
     FOREIGN KEY (library_id) REFERENCES library(id) ON DELETE CASCADE
 );
 
-INSERT INTO libby.library (name, building, latitude, longitude, capacity, floor_count, image, place_id) VALUES
+INSERT INTO library (name, building, latitude, longitude, capacity, floor_count, image, place_id) VALUES
     ("Elizabeth Dafoe Library",                        "Elizabeth Dafoe Library",    49.80588, -97.14097, 1007, 3, "https://umanitoba.ca/libraries/sites/libraries/files/styles/3x2_900w/public/2020-11/dafoe-library.JPG?itok=77qX113_", "ChIJyT3wMeN16lIR4uCNN2ihi2c"),
     ("Father Harold Drake Library",                    "St. Paul's College",         49.80806, -97.13000, 150 , 2, "https://umanitoba.ca/libraries/sites/libraries/files/styles/3x2_900w/public/2020-12/father-h-drake-library_2.jpg?itok=Y_svr4zg", "ChIJ29m287F16lIRbp_uJl2vhGU"),
     ("E. K. Williams Law Library",                     "Robson Hall",                49.80550, -97.14150, 113,  1, "https://www.umanitoba.ca/libraries/sites/libraries/files/styles/3x2_900w/public/2020-12/ek-williams-law-library-exterior.jpg?itok=6b-G8tAl", "ChIJQ03Rg8N16lIRCSg0XpMVN48"),
@@ -32,7 +32,7 @@ INSERT INTO libby.library (name, building, latitude, longitude, capacity, floor_
     ("Jim Peebles Sciences and Technology Library",    "Machray Hall",               49.80600, -97.14050, 486,  3, "static/5.png", "ChIJU0VlYeN16lIR7G_0aqtCyIc"),
     ("Albert D. Cohen Management Library",             "Drake Centre",               49.80806, -97.13000, 0,    4, "static/6.png", ""),
     ("Donald W. Craik Engineering Library",            "EITC-E3",                    49.80590, -97.14000, 0,    1, "static/7.png", ""),
-    ("Eckhardt-Gramatte Music Library",                "Tache Arts Complex",         49.80580, -97.14200, 0,    1, "https://umanitoba.ca/libraries/sites/libraries/files/styles/3x2_900w/public/2024-12/music-library-interior-study-area.jpg?itok=U8kfJFra", "ChIJ47NlLRZ16lIRmX5v8E3uUMs")
+    ("Eckhardt-Gramatte Music Library",                "Tache Arts Complex",         49.80580, -97.14200, 0,    1, "https://umanitoba.ca/libraries/sites/libraries/files/styles/3x2_900w/public/2024-12/music-library-interior-study-area.jpg?itok=U8kfJFra", "ChIJ47NlLRZ16lIRmX5v8E3uUMs");
 
 CREATE VIEW current_capacity AS
 SELECT dp.library_id, SUM(dp.offset) AS fullness FROM capacity_datapoint as dp
