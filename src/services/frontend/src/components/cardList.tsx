@@ -8,7 +8,7 @@ export type CardListProps = {
 export default function CardList({ cards }: CardListProps) {
   return (
 
-    <div className="flex h-full flex-col gap-8 overflow-y-auto m-10">
+    <div className="flex h-full flex-col gap-8 overflow-y-auto ml-10 mr-10">
         <ul>
             {cards.map((card, index) => (
                 <li key={index}>

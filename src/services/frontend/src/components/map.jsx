@@ -1,48 +1,86 @@
 import React from 'react'
-import { GoogleMap, useJsApiLoader } from '@react-google-maps/api'
+import { GoogleMap, MarkerF, useJsApiLoader } from '@react-google-maps/api'
 
 const containerStyle = {
-  width: '900px',
-  height: '900px',
+  width: '100%',
+  height: '100%',
+  borderRadius: '20px',
+  margin: '1em',
 }
 
 const center = {
-  lat: 49.809583,
-  lng: -97.133694
+  lat: 49.809906490344185,
+  lng: -97.13390464449382
 };
 
+const LIBRARIES = ['places'];
+
+const loaderOptions = {
+  id: 'google-map-script',
+  googleMapsApiKey: import.meta.env.VITE_MAPS_KEY,
+  libraries: LIBRARIES,
+}
+
 function MyComponent() {
-  const { isLoaded } = useJsApiLoader({
-    id: 'google-map-script',
-  })
+  const { isLoaded } = useJsApiLoader(loaderOptions)
 
   const [map, setMap] = React.useState(null)
+  const [places, setPlaces] = React.useState([])
 
-  const onLoad = React.useCallback(function callback(map) {
-    // This is just an example of getting and using the map instance!!! don't just blindly copy!
-    const bounds = new window.google.maps.LatLngBounds(center)
-    map.fitBounds(bounds)
+  const searchLibraries = React.useCallback((mapInstance) => {
+    const service = new window.google.maps.places.PlacesService(mapInstance)
 
-    setMap(map)
+    service.nearbySearch(
+      {
+        location: center,
+        radius: 3000,
+        type: 'library',
+      },
+      (results, status) => {
+        if (
+          status === window.google.maps.places.PlacesServiceStatus.OK &&
+          results
+        ) {
+          setPlaces(results)
+        }
+      }
+    )
   }, [])
 
-  const onUnmount = React.useCallback(function callback(map) {
+  const handleMapLoad = React.useCallback(
+    (mapInstance) => {
+      setMap(mapInstance)
+      searchLibraries(mapInstance)
+    },
+    [searchLibraries]
+  )
+
+  const handleUnmount = React.useCallback(() => {
     setMap(null)
   }, [])
 
-  return isLoaded ? (
+  if (!isLoaded) return null
+
+  return (
     <GoogleMap
       mapContainerStyle={containerStyle}
       center={center}
-      zoom={15}
-      onLoad={onLoad}
-      onUnmount={onUnmount}
+      zoom={17}
+      onLoad={handleMapLoad}
+      onUnmount={handleUnmount}
     >
-      {/* Child components, such as markers, info windows, etc. */}
-      <></>
+      {places.map((place) => (
+        <MarkerF
+          key={place.place_id}
+          position={{
+            lat: place.geometry.location.lat(),
+            lng: place.geometry.location.lng(),
+          }}
+          title={place.name}
+          clickable={true}
+        />
+      ))}
     </GoogleMap>
-  ) : (
-    <></>
   )
 }
 
