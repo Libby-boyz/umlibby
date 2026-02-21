@@ -1,5 +1,5 @@
 from flask_cors import CORS
-from flask import Flask
+from flask import Flask, request
 import mysql.connector
 import os
 import signal
@@ -43,7 +43,7 @@ def get_fullness():
         "SELECT * FROM library"
     )
     cursor.execute(statement)
-    return [item for sublist in cursor.fetchall() for item in sublist]
+    return cursor.fetchall()
 
 
 def get_location_id(name, cursor) -> int | None:
