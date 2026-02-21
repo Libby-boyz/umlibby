@@ -38,7 +38,14 @@ def library_enter(library_id, offset):
 def get_fullness():
     cursor = connection.cursor(dictionary=True)
     statement = (
-        "SELECT * FROM library"
+        '''
+        SELECT lib.*, SUM(dp.offset) AS fullness
+        FROM library lib
+        LEFT JOIN capacity_datapoint dp
+            ON dp.library_id = lib.id
+            AND DATE(dp.time) = CURDATE()
+        GROUP BY lib.id;
+        '''
     )
     cursor.execute(statement)
     return jsonify(cursor.fetchall())
