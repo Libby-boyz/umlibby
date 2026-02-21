@@ -8,7 +8,7 @@ CREATE TABLE libby.library(
     longitude   DOUBLE       NOT NULL,
     floor_count INTEGER      NOT NULL DEFAULT 1,
     capacity    INTEGER      NOT NULL,
-    image       VARCHAR(100) NOT NULL,
+    image       VARCHAR(500) NOT NULL,
     PRIMARY KEY (id)
 );
 
