@@ -3,13 +3,13 @@ import Header from "@components/header";
 import CardList from "@components/cardList";
 import Map from "@components/map";
 import { Button } from '@mui/material';
-import type { Library } from "@mytypes/library";
+import type { ILibrary } from "@mytypes/library";
 
 // const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-const apiBaseUrl = "localhost"
+const apiBaseUrl = "localhost:8000"
 
 export default function Home() {
-    const [cards, setCards] = useState<Library[]>([]);
+    const [cards, setCards] = useState<ILibrary[]>([]);
 
     // On load of the page, fetch the data from the backend
     useEffect(() => {

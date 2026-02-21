@@ -1,6 +1,6 @@
-import type { Library } from "@mytypes/library";
+import type { ILibrary } from "@mytypes/library";
 
-export default function Card({ name, building, floorCount, capacity, image }: Library) {
+export default function Card({ name, building, floorCount, capacity, image }: ILibrary) {
   return (
     <div className="max-w-xs rounded-2xl overflow-hidden shadow-lg bg-white">
       <img className="w-full h-40 object-cover" src={image} alt={name} />

@@ -1,4 +1,4 @@
-export interface Library {
+export interface ILibrary {
     name: string;
     building: string;
     floorCount: number;

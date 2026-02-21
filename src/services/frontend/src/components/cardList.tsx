@@ -1,8 +1,8 @@
 import Card from "@components/card";
-import type { Library } from "@mytypes/library";
+import type { ILibrary } from "@mytypes/library";
 
 export type CardListProps = {
-    cards: Library[],
+    cards: ILibrary[],
 };
 
 export default function CardList({ cards }: CardListProps) {
