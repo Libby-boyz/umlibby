@@ -1,8 +1,7 @@
 from flask_cors import CORS
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import mysql.connector
 import os
-import json
 import signal
 import datetime
 import sys
@@ -39,12 +38,12 @@ def library_enter(location, offset):
 
 @app.route('/api/locations', methods=["GET"])
 def get_fullness():
-    cursor = connection.cursor()
+    cursor = connection.cursor(dictionary=True)
     statement = (
         "SELECT * FROM library"
     )
     cursor.execute(statement)
-    return json.dumps(cursor.fetchall())
+    return jsonify(cursor.fetchall())
 
 
 def get_location_id(name, cursor) -> int | None:
