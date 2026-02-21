@@ -2,6 +2,7 @@ from flask_cors import CORS
 from flask import Flask, request
 import mysql.connector
 import os
+import json
 import signal
 import datetime
 import sys
@@ -43,7 +44,7 @@ def get_fullness():
         "SELECT * FROM library"
     )
     cursor.execute(statement)
-    return cursor.fetchall()
+    return json.dumps(cursor.fetchall())
 
 
 def get_location_id(name, cursor) -> int | None:
