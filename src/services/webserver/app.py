@@ -8,6 +8,7 @@ import sys
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+signal.signal(signal.SIGTERM, lambda: sys.exit(5))
 
 connection = mysql.connector.connect(
     host="db",
@@ -62,29 +63,48 @@ def new_datapoint(id, enter: bool, cursor):
     cursor.execute(statement, (id, 1 if enter else -1))
 
 
-@app.route('/api/libraries/<library_name>/count', methods=["GET"])
-def get_library(library_name: str):
-    print(request.args, file=sys.stderr)
-    time = datetime.datetime.now().strftime("%Y%m%d %X")
-    if 'at' in request.args:
-        time = request.args['at']
+@app.route('/api/libraries/<library_id>/<date>/count', methods=["GET"])
+def get_library(library_id: str, date: str):
+    if date == 'today':
+        date = datetime.datetime.now().strftime("%Y-%m-%d")
+    print(date, file=sys.stderr)
 
     cursor = connection.cursor()
-    count = get_current_library_count(library_name, time, cursor)
+    if 'at' in request.args:
+        count = get_current_library_count_at(library_id, date, request.args.at, cursor)
+    else:
+        count = get_current_library_count(library_id, date, cursor)
+
     cursor.close()
     if count is None:
         return 'no data', 204
-    return int(count)
+    return {'count': str(count)}, 200
 
 
-def get_current_library_count(library_id, time, cursor) -> int | None:
+# probably doesn't work
+def get_current_library_count_at(library_id, date, time, cursor) -> int | None:
     statement = (
         '''
         SELECT sum(dp.offset) FROM capacity_datapoint as dp
-        WHERE dp.library_id = %s AND DATE(dp.time) = CURRENT_DATE();
+        WHERE dp.library_id = %s
+        AND DATE(dp.time) = %s
+        AND TIME(dp.time) < %s;
         '''
     )
 
-    cursor.execute(statement, (library_id, ))
+    cursor.execute(statement, (library_id, date, time))
+    result = cursor.fetchone()
+    return result[0] if result else None
+
+
+def get_current_library_count(library_id, date, cursor) -> int | None:
+    statement = (
+        '''
+        SELECT sum(dp.offset) FROM capacity_datapoint as dp
+        WHERE dp.library_id = %s AND DATE(dp.time) = %s;
+        '''
+    )
+
+    cursor.execute(statement, (library_id, date))
     result = cursor.fetchone()
     return result[0] if result else None
