@@ -13,20 +13,26 @@ export default function Home() {
 
     // On load of the page, fetch the data from the backend
     useEffect(() => {
-        fetch(`${apiBaseUrl}/api/locations`)
-            .then((res) => {
-                if(!res.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                return res.json();
-            })
-            .then((data) => {
-                console.log("results:", data)
-                setCards(data);
-            })
-            .catch((error) => {
-                console.error("Error fetching data:", error);
-            })
+        const interval = setInterval(() => {
+            fetch(`${apiBaseUrl}/api/locations`)
+                .then((res) => {
+                    if(!res.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    return res.json();
+                })
+                .then((data) => {
+                    console.log("results:", data)
+                    setCards(data);
+                })
+                .catch((error) => {
+                    console.error("Error fetching data:", error);
+                })
+            }, 1000);
+
+        return () => {
+            clearInterval(interval);
+        };
     }, []);
 
     const filteredCards = selectedPlaceId ? cards.filter((c) => c.place_id === selectedPlaceId) : cards;
