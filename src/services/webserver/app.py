@@ -17,6 +17,25 @@ connection = mysql.connector.connect(
 )
 
 
+cursor = connection.cursor()
+cursor.execute('SET @@session.time_zone = "-6:00";')
+cursor.close()
+connection.commit()
+
+
+@app.route('/api/<location>/<direction>', methods=["POST"])
+def library_enter(location, direction):
+    cursor = connection.cursor()
+    id = get_location_id(location, cursor)
+    if not id:
+        return "Library does not exist", 404
+
+    new_datapoint(id, (direction == 'in'), cursor)
+    connection.commit()
+    cursor.close()
+    return '', 204
+
+
 @app.route('/api/locations', methods=["GET"])
 def get_fullness():
     cursor = connection.cursor()
@@ -27,70 +46,40 @@ def get_fullness():
     return [item for sublist in cursor.fetchall() for item in sublist]
 
 
-@app.route('/api/<location>/<direction>', methods=["POST"])
-def library_enter(location, direction):
-    cursor = connection.cursor()
-    id = getLocationId(location, cursor)
-    newDatapoint(id, (direction == 'enter'), cursor)
-    cursor.close()
-    connection.commit()
-    return 'ok'
-
-
-def getLocationId(name, cursor):
+def get_location_id(name, cursor) -> int | None:
     statement = (
         'SELECT id FROM libby.library WHERE name = %s'
     )
     cursor.execute(statement, (name,))
-    return cursor.fetchone()[0]
+    result = cursor.fetchone()
+    return result[0] if result else None
 
 
-def newDatapoint(id, enter: bool, cursor):
+def new_datapoint(id, enter: bool, cursor):
     statement = (
-        'INSERT INTO libby.capacity_datapoint (library_id, direction) VALUES (%s, %s)'
+        'INSERT INTO libby.capacity_datapoint (library_id, offset) VALUES (%s, %s)'
     )
-    cursor.execute(statement, (id, enter))
+    cursor.execute(statement, (id, 1 if enter else -1))
 
 
-
-
-@app.route('/api/libraries/<int:library_id>')
-def get_library(library_id:int):
-   
-    
-    # Current Count
+@app.route('/api/libraries/<libraryname>', methods=["GET"])
+def get_library(library_name: str):
     cursor = connection.cursor()
-    count = get_current_library_count(library_id, cursor)
+    count = get_current_library_count(library_name, cursor)
     cursor.close()
-    return count
+    if count is None:
+        return 'no data', 204
+    return int(count)
 
-def get_current_library_count(library_id, cursor)->int:
-    today_start = datetime.datetime.today()
+
+def get_current_library_count(library_id, cursor) -> int | None:
     statement = (
         '''
-        with today as(
-        select * from 
-        libby.library natural join libby.capacity_datapoint
-        where library.id = %s and time > %s
-        ),
-        ins as(
-        select count(*) as inCOunt from today
-        where direction = true
-        ),
-        outs as(
-        select count(*) as outCount from today
-        where direction = false
-        )
-        select inCount - (select outCount from outs) from ins
-        ''' 
+        SELECT sum(dp.direction) FROM capacity_datapoint as dp
+        WHERE dp.library_id = %s AND DATE(dp.time) = CURRENT_DATE();
+        '''
     )
-    cursor.execute(statement, (library_id, today_start))
+
+    cursor.execute(statement, (library_id, ))
     result = cursor.fetchone()
-    
-    # Make sure we actually got a value
-    if result and result[0] is not None:
-        return int(result[0])
-    
-    return 0
-
-
+    return result[0] if result else None

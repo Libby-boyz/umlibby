@@ -1,3 +1,4 @@
 wget \
   --method=POST \
-  http://localhost:8000/api/dafoe/enter
+  -O - \
+  http://localhost:8000/api/Elizabeth%20Dafoe%20Library/in
