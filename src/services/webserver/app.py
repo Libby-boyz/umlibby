@@ -64,7 +64,7 @@ def new_datapoint(id, offset, cursor):
     statement = (
         'INSERT INTO libby.capacity_datapoint (library_id, offset) VALUES (%s, %s)'
     )
-    cursor.execute(statement, offset)
+    cursor.execute(statement, id, offset)
 
 
 @app.route('/api/libraries/<library_id>/<date>/count', methods=["GET"])
