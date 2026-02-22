@@ -125,7 +125,7 @@ void loop() {
 void determineMotion() {
   if (sensorA.recentTriggerTime < sensorB.recentTriggerTime) {
     Serial.println("A before B");
-    flash(GREEN);
+    flash(YELLOW);
     send(true);
   } else {
     Serial.println("B before A");

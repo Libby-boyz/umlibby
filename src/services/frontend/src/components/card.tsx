@@ -17,7 +17,7 @@ export default function Card({ name, building, floor_count, capacity, image, id,
       <div className="flex-1 p-6 flex flex-col justify-center space-y-3">
         <h2 className="text-3xl font-semibold text-gray-800">{name}</h2>
         <div className="text-gray-600 text-lg space-y-1">
-          <p>Capacity: {fullness == null ? 0 : fullness}/{capacity}</p>
+          <p>Capacity: <b>{fullness == null ? 0 : fullness}/{capacity}</b></p>
           <p>Building: {building}</p>
           <p>Floor Count: {floor_count}</p>
         </div>
