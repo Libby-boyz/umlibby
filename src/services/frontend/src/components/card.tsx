@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { ILibrary } from "@mytypes/library";
 import { Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
 import NavigationIcon from '@mui/icons-material/Navigation';
+import TrendsGraph from "./trendsGraph";
 
 export default function Card({ name, building, floor_count, capacity, image, id, fullness, place_id, selected, summary }: ILibrary) {
 
@@ -10,6 +11,12 @@ export default function Card({ name, building, floor_count, capacity, image, id,
   if(!image || image.trim().length === 0){
     image = `static/${id}.png`
   }
+
+
+  const deleteMe: Record<string, number> = {
+    "1pm": 12,
+    "2pm": 15
+  };
 
   return (
   <div className="max-w-3xl rounded-2xl shadow-lg bg-white hover:shadow-xl transition-shadow duration-300 m-5">
@@ -33,6 +40,7 @@ export default function Card({ name, building, floor_count, capacity, image, id,
         <Accordion expanded={place_id === selected && selected !== "" || isClicked} onClick={() => setIsClicked(!isClicked)}>
         <AccordionSummary sx={{backgroundColor: "#c3ecb2"}} expandIcon={<NavigationIcon sx={{transform: "rotate(180deg)"}}/>}>Details</AccordionSummary>
         <AccordionDetails>{summary}</AccordionDetails>
+        <AccordionDetails><TrendsGraph avg_data={deleteMe}/></AccordionDetails>
         </Accordion>
     </div>
     </div>

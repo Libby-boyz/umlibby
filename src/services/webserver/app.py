@@ -235,6 +235,7 @@ def get_avg_count_per_hour(library_id):
         return None
 
     # Swap hour num (0-23) to display names (12am-11pm)
+    data = {}
     for i in range(len(result)):
 
         hour = int(result[i]['hour'])
@@ -247,6 +248,9 @@ def get_avg_count_per_hour(library_id):
         else:
             display_name = f"{int(hour)%12}pm"
 
-        result[i]['hour'] = display_name
+        data[display_name] = result[i]["average"]
 
-    return result
+    print(data)
+    return data
+
+get_avg_count_per_hour(1)
