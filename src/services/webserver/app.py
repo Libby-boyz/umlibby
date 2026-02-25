@@ -17,15 +17,22 @@ def setTimezone():
     cursor.close()
 
 
-connection = mysql.connector.connect(
-    pool_size=15,
-    host="db",
-    port=3306,
-    user='root',
-    password=os.environ['MYSQL_ROOT_PASSWORD'],
-    database='libby'
-)
+def create_connection():
+    for _ in range(30):
+        try:
+            return mysql.connector.connect(
+                pool_size=15,
+                host="db",
+                port=3306,
+                user='root',
+                password=os.environ['MYSQL_ROOT_PASSWORD'],
+                database='libby'
+            )
+        except mysql.connector.Error:
+            sleep(1)
+    raise Exception("DB not reachable")
 
+connection = create_connection()
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -50,7 +57,7 @@ def execute_query_read_only(query:str, params:tuple, output_func=None, use_dict=
                 output = output_func(cursor)
             cursor.close()
             return output
-        
+
         except mysql.connector.Error:
 
             # Make sure we actually got a cursor before closing
@@ -58,7 +65,7 @@ def execute_query_read_only(query:str, params:tuple, output_func=None, use_dict=
                 cursor.close()
             sleep(0.001)
             tries+=1
-    
+
     return None
 
 def execute_query(query:str, params:tuple, output_func=None, use_dict=False):
@@ -75,7 +82,7 @@ def execute_query(query:str, params:tuple, output_func=None, use_dict=False):
                 output = output_func(cursor)
             cursor.close()
             return output
-        
+
         except mysql.connector.Error:
 
             # Make sure we actually got a cursor before closing
@@ -83,7 +90,7 @@ def execute_query(query:str, params:tuple, output_func=None, use_dict=False):
                 cursor.close()
             sleep(0.001)
             tries+=1
-    
+
     return None
 
 def get_first(cursor):
@@ -144,7 +151,7 @@ def get_locations():
     #result = jsonify(cursor.fetchall())
     #cursor.close()
     result = jsonify(execute_query_read_only(statement, (), get_all, use_dict=True))
-    return result
+    return result or jsonify([])
 
 
 
@@ -207,7 +214,7 @@ def get_current_library_count_at(library_id, date, time) -> int | None:
 def hourly_trends(library_id):
     result = get_avg_count_per_hour(library_id)
     if not result:
-        return 'no data', 204
+        return jsonify({}), 200
     else:
         return jsonify(result), 200
 
@@ -216,12 +223,12 @@ def get_avg_count_per_hour(library_id):
     statment = '''
         -- Get number of people entering library for each of each day
         WITH daily_counts as (
-        SELECT SUM(dp.offset) as count, 
-        DATE(dp.time) as date_logged,
-        HOUR(dp.time) as hour_logged
-        FROM capacity_datapoint as dp
-        WHERE library_id = %s AND dp.offset > 0
-        GROUP BY date_logged, hour_logged
+            SELECT SUM(dp.offset) as count,
+            DATE(dp.time) as date_logged,
+            HOUR(dp.time) as hour_logged
+            FROM capacity_datapoint as dp
+            WHERE library_id = %s AND dp.offset > 0
+            GROUP BY date_logged, hour_logged
         )
 
         -- Calculate average people per day and group by hour
@@ -229,7 +236,7 @@ def get_avg_count_per_hour(library_id):
         FROM daily_counts
         GROUP BY hour_logged
         '''
-    
+
     result = execute_query_read_only(statment, (library_id,), get_all, use_dict=True)
     if not result:
         return None
@@ -252,5 +259,3 @@ def get_avg_count_per_hour(library_id):
 
     print(data)
     return data
-
-get_avg_count_per_hour(1)

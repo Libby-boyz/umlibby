@@ -71,7 +71,7 @@ function Map({ onMarkerClick }) {
       onClick={(e) => e.stopPropagation()}
     >
       {places.map((place) => {
-          console.log("Place ID:", place.place_id, place.name);
+          // console.log("Place ID:", place.place_id, place.name);
           return (
             <MarkerF
               key={place.place_id}

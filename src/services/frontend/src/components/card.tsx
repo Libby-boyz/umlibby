@@ -1,44 +1,43 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { ILibrary } from "@mytypes/library";
 import { Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
 import NavigationIcon from '@mui/icons-material/Navigation';
-import TrendsGraph from "./trendsGraph";
+import TrendsGraph from "@components/trendsGraph";
 
 export default function Card({ name, building, floor_count, capacity, image, id, fullness, place_id, selected, summary }: ILibrary) {
 
   const [isClicked, setIsClicked] = useState(false);
+  const [trends, setTrends] = useState<Record<string, number>>({});
 
   if(!image || image.trim().length === 0){
     image = `static/${id}.png`
   }
 
+    // const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+    const apiBaseUrl = "http://localhost:8000"
 
-const deleteMe: Record<string, number> = {
-  "1am": 2,
-  "2am": 3,
-  "3am": 5,
-  "4am": 10,
-  "5am": 18,
-  "6am": 31,
-  "7am": 48,
-  "8am": 68,
-  "9am": 85,
-  "10am": 96,
-  "11am": 105,
-  "12pm": 110,
-  "1pm": 110,
-  "2pm": 105,
-  "3pm": 96,
-  "4pm": 85,
-  "5pm": 68,
-  "6pm": 48,
-  "7pm": 31,
-  "8pm": 18,
-  "9pm": 10,
-  "10pm": 5,
-  "11pm": 3,
-  "12am": 2
-};
+    useEffect(() => {
+        if (!(place_id === selected && selected !== "") && !isClicked) return;
+        if (Object.keys(trends).length > 0) return; // already loaded
+        const controller = new AbortController();
+
+        fetch(`${apiBaseUrl}/api/libraries/${id}/hourly-trends`, {
+            signal: controller.signal
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("Network error");
+                return res.json();
+            })
+            .then(data => setTrends(data ?? {}))
+            .catch(err => {
+                if (err.name !== "AbortError") {
+                    console.error(err);
+                }
+            });
+
+        return () => controller.abort();
+
+    }, [isClicked, place_id, selected, id]);
 
   return (
   <div className="max-w-3xl rounded-2xl shadow-lg bg-white hover:shadow-xl transition-shadow duration-300 m-5">
@@ -62,7 +61,7 @@ const deleteMe: Record<string, number> = {
         <Accordion expanded={place_id === selected && selected !== "" || isClicked} onClick={() => setIsClicked(!isClicked)}  slotProps={{ transition: { unmountOnExit: true } }}>
         <AccordionSummary sx={{backgroundColor: "#c3ecb2"}} expandIcon={<NavigationIcon sx={{transform: "rotate(180deg)"}}/>}>Details</AccordionSummary>
         <AccordionDetails>{summary}</AccordionDetails>
-        <AccordionDetails><TrendsGraph avg_data={deleteMe}/></AccordionDetails>
+        <AccordionDetails><TrendsGraph avg_data={trends}/></AccordionDetails>
         </Accordion>
     </div>
     </div>

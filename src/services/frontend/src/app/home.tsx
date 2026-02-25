@@ -11,28 +11,28 @@ export default function Home() {
     const [cards, setCards] = useState<ILibrary[]>([]);
     const [selectedPlaceId, setSelectedPlaceId] = useState<string>("");
 
+    const fetchData = () => {
+        fetch(`${apiBaseUrl}/api/locations`)
+        .then((res) => {
+            if(!res.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return res.json();
+        })
+        .then((data) => {
+            console.log("results:", data)
+            setCards(data);
+        })
+        .catch((error) => {
+            console.error("Error fetching data:", error);
+        });
+    };
+
     // On load of the page, fetch the data from the backend
     useEffect(() => {
-        const interval = setInterval(() => {
-            fetch(`${apiBaseUrl}/api/locations`)
-                .then((res) => {
-                    if(!res.ok) {
-                        throw new Error("Network response was not ok");
-                    }
-                    return res.json();
-                })
-                .then((data) => {
-                    console.log("results:", data)
-                    setCards(data);
-                })
-                .catch((error) => {
-                    console.error("Error fetching data:", error);
-                })
-            }, 1000);
-
-        return () => {
-            clearInterval(interval);
-        };
+        fetchData();
+        const interval = setInterval(fetchData, 10000);
+        return () => { clearInterval(interval); };
     }, []);
 
     const filteredCards = selectedPlaceId ? cards.filter((c) => c.place_id === selectedPlaceId) : cards;
