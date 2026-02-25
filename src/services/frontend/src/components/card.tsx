@@ -13,10 +13,32 @@ export default function Card({ name, building, floor_count, capacity, image, id,
   }
 
 
-  const deleteMe: Record<string, number> = {
-    "1pm": 12,
-    "2pm": 15
-  };
+const deleteMe: Record<string, number> = {
+  "1am": 2,
+  "2am": 3,
+  "3am": 5,
+  "4am": 10,
+  "5am": 18,
+  "6am": 31,
+  "7am": 48,
+  "8am": 68,
+  "9am": 85,
+  "10am": 96,
+  "11am": 105,
+  "12pm": 110,
+  "1pm": 110,
+  "2pm": 105,
+  "3pm": 96,
+  "4pm": 85,
+  "5pm": 68,
+  "6pm": 48,
+  "7pm": 31,
+  "8pm": 18,
+  "9pm": 10,
+  "10pm": 5,
+  "11pm": 3,
+  "12am": 2
+};
 
   return (
   <div className="max-w-3xl rounded-2xl shadow-lg bg-white hover:shadow-xl transition-shadow duration-300 m-5">
@@ -37,7 +59,7 @@ export default function Card({ name, building, floor_count, capacity, image, id,
       />
     </div>
     <div className="p-4">
-        <Accordion expanded={place_id === selected && selected !== "" || isClicked} onClick={() => setIsClicked(!isClicked)}>
+        <Accordion expanded={place_id === selected && selected !== "" || isClicked} onClick={() => setIsClicked(!isClicked)}  slotProps={{ transition: { unmountOnExit: true } }}>
         <AccordionSummary sx={{backgroundColor: "#c3ecb2"}} expandIcon={<NavigationIcon sx={{transform: "rotate(180deg)"}}/>}>Details</AccordionSummary>
         <AccordionDetails>{summary}</AccordionDetails>
         <AccordionDetails><TrendsGraph avg_data={deleteMe}/></AccordionDetails>
