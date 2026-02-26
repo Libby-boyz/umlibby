@@ -1,53 +1,64 @@
 import { createTheme } from "@mui/material";
 
-export function setupTheme() {
-    const palette = {
-      primary: {
-        main: "#406da4",
-      },
-      secondary: {
-        main: "#E6EEF2",
-        dark: "#CFDDE5",
-      },
-      text: {
-        primary: "#555",
-      },
-      background: {
-        main: "#555",
-      },
-    };
 
-    return createTheme({
-      palette,
-      shape: {
-        borderRadius: 10,
-      },
-      typography: {
+export const theme = createTheme({
+    cssVariables: true,
+        palette: {
+            mode: "light",
+            primary: {
+                main: "#004BAD",
+                light: "#3A78C7",
+                dark: "#00337A",
+                contrastText: "#FFFFFF",
+            },
+            secondary: {
+                main: "#FF751F",
+                light: "#FF9A57",
+                dark: "#CC5E18",
+                contrastText: "#FFFFFF",
+            },
+            success: {
+                main: "#C3ECB2",
+                light: "#DCF5D2",
+                dark: "#8FCF78",
+                contrastText: "#1B5E20",
+            },
+            background: {
+                default: "#F7F7F6",
+                paper: "#FFFFFF",
+            },
+            text: {
+                primary: "#1A1A1A",
+                secondary: "#4A4A4A",
+            },
+            divider: "#E0E0E0",
+        },
+    shape: {
+        // borderRadius: 10,
+    },
+    typography: {
         htmlFontSize: 10,
         fontFamily: "Roboto, Arial, sans-serif",
         h1: {
-          fontSize: "3rem",
+            fontSize: "3rem",
         },
         h2: {
-          fontSize: "2.7rem",
+            fontSize: "2.7rem",
         },
         h3: {
-          fontSize: "2.5rem",
+            fontSize: "2.5rem",
         },
         body1: {
-          fontSize: "1.4rem",
+            fontSize: "1.4rem",
         },
         body2: {
-          fontSize: "1.2rem",
+            fontSize: "1.2rem",
         },
-        body3: {
-          fontSize: "1.25rem",
-        },
-      },
-      components: {
+    },
+    components: {
         MuiCssBaseline: {
-            styleOverrides: ({ palette }) => {
-               return `
+            styleOverrides: ({palette}) => {
+                return `
                    html {
                       font-size: 62.5%;
                    }
@@ -69,20 +80,17 @@ export function setupTheme() {
             }
         },
         MuiButton: {
-          styleOverrides: {
-            borderRadius: 20,
-            fontWeight: "bold",
-          },
-          defaultProps: {
-            variant: "contained",
-            disableElevation: true,
-          },
+            styleOverrides: {
+            },
+            defaultProps: {
+                variant: "contained",
+                disableElevation: true,
+            },
         },
         MuiStack: {
-          defaultProps: {
-            gap: 2,
-          },
+            defaultProps: {
+                gap: 2,
+            },
         },
-      },
-    });
-}
+    }
+});

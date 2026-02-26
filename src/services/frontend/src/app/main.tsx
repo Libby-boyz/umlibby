@@ -7,17 +7,17 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import Home from "./home.tsx";
-import { CssBaseline, ThemeProvider } from '@mui/material';
-import { setupTheme } from '../themes/theme';
-
-const theme = setupTheme();
+import { ThemeProvider } from '@mui/material';
+import { theme } from '../themes/theme';
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Home />} />
-          </Routes>
-        </BrowserRouter>
+        <ThemeProvider theme={theme}>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                </Routes>
+            </BrowserRouter>
+        </ThemeProvider>
     </StrictMode>
 );
