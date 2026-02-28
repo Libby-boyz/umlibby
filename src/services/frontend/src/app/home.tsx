@@ -3,6 +3,7 @@ import Header from "@components/header";
 import CardList from "@components/cardList";
 import Map from "@components/map";
 import type { ILibrary } from "@mytypes/library";
+import { Box, Container } from "@mui/material";
 
 // const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 export const apiBaseUrl = "http://localhost:8000"
@@ -13,19 +14,19 @@ export default function Home() {
 
     const fetchData = () => {
         fetch(`${apiBaseUrl}/api/locations`)
-        .then((res) => {
-            if(!res.ok) {
-                throw new Error("Network response was not ok");
-            }
-            return res.json();
-        })
-        .then((data) => {
-            console.log("results:", data)
-            setCards(data);
-        })
-        .catch((error) => {
-            console.error("Error fetching data:", error);
-        });
+            .then((res) => {
+                if (!res.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return res.json();
+            })
+            .then((data) => {
+                console.log("results:", data)
+                setCards(data);
+            })
+            .catch((error) => {
+                console.error("Error fetching data:", error);
+            });
     };
 
     // On load of the page, fetch the data from the backend
@@ -38,15 +39,17 @@ export default function Home() {
     const filteredCards = selectedPlaceId ? cards.filter((c) => c.place_id === selectedPlaceId) : cards;
 
     return (
-        <div className="h-screen w-screen flex flex-col bg-off-white">
-            <Header locname="UNIVERSITY OF MANITOBA"/>
-            <div className="grid grid-cols-2 flex-1 min-h-0 p-2" onClick={() => setSelectedPlaceId("")} >
-                <CardList cards={filteredCards} selected={selectedPlaceId} />
-                <div className="flex h-full w-full p-5 pr-15" onClick={(e) => e.stopPropagation()} >
-                    {/* @ts-ignore */}
-                    <Map onMarkerClick={(placeId) => setSelectedPlaceId(placeId)} />
-                </div>
-            </div>
-        </div>
+        <Box sx={{width: "100%", display: "grid", placeItems: "center"}}>
+            <Header locname="University of Manitoba" />
+            <Container maxWidth="xl">
+                    <Box sx={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", flex: 1, minHeight: 0, p: 2 }} onClick={() => setSelectedPlaceId("")} >
+                        <CardList cards={filteredCards} selected={selectedPlaceId} />
+                        <Box className="flex h-screen w-full p-5 pr-15" onClick={(e) => e.stopPropagation()} >
+                            {/* @ts-ignore */}
+                            <Map onMarkerClick={(placeId) => setSelectedPlaceId(placeId)} />
+                        </Box>
+                </Box>
+            </Container>
+        </Box>
     );
 }
